@@ -1,0 +1,24 @@
+server:
+  requestLog:
+    appenders:
+      - type: file
+        currentLogFilename: logs/ioms-app-access.log
+        archive: true
+        archivedLogFilenamePattern: logs/iomsioms-app-access-%d.log.gz
+        archivedFileCount: 1
+        timeZone: IST
+
+
+logging:
+  level: INFO
+
+  appenders:
+    - type: file
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss:SSS} Type=%-6level Thread=%t Logger=\"%logger{5}\" Message=\"%msg\" %n"
+      currentLogFilename: logs/ioms-app.log
+      archive: true
+      archivedLogFilenamePattern: logs/ioms-app-%d.log.gz
+      archivedFileCount: 10
+      timeZone: IST
+
+appName: "WMS"

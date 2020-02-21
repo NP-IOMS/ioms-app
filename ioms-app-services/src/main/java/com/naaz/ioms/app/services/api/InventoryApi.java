@@ -1,9 +1,9 @@
 package com.naaz.ioms.app.services.api;
 
 import com.naaz.ioms.app.services.exception.IomsDbAccessException;
-import com.naaz.ioms.data.access.dao.UsersDao;
-import com.naaz.ioms.data.access.entities.Users;
 import com.naaz.ioms.app.services.util.Constants;
+import com.naaz.ioms.data.access.dao.InventoryDao;
+import com.naaz.ioms.data.access.entities.Inventory;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,18 +18,18 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/")
-@Api("Users")
+@Api("Inventory")
 @Slf4j
-public class UsersApi {
+public class InventoryApi {
 
-    private final UsersDao usersDao;
+    private InventoryDao inventoryDao;
 
-    public UsersApi(UsersDao usersDao) {
-        this.usersDao = usersDao;
+    public InventoryApi(InventoryDao inventoryDao) {
+        this.inventoryDao = inventoryDao;
     }
 
     /**
-     * api to fetch all users available.
+     * api to fetch all inventory available.
      *
      * @return
      * @throws com.naaz.ioms.app.services.exception.IomsDbAccessException
@@ -37,20 +37,20 @@ public class UsersApi {
     @GET
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch all users in db")
-    @Path(Constants.API_V1_VERSION + "/users")
-    public List<Users> getAllUsers() throws IomsDbAccessException {
+    @ApiOperation("Fetch all inventory in db")
+    @Path(Constants.API_V1_VERSION + "/inventory")
+    public List<Inventory> getAllInventory() throws IomsDbAccessException {
         try{
-            return usersDao.findAll();
+            return inventoryDao.findAll();
         } catch (Exception ex) {
-            log.error("failed to fetch all users due to exception." , ex);
+            log.error("failed to fetch all inventory due to exception." , ex);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to fetch a particular user by its id.
+     * api to fetch a particular inventory by its id.
      *
      * @param id
      * @return
@@ -59,20 +59,20 @@ public class UsersApi {
     @GET
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch a particular user with its id")
-    @Path(Constants.API_V1_VERSION + "/users/{id}")
-    public Users getUserById(@PathParam("id") final long id) throws IomsDbAccessException {
+    @ApiOperation("Fetch a particular inventory with its id")
+    @Path(Constants.API_V1_VERSION + "/inventory/{id}")
+    public Inventory getInventoryById(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            return usersDao.find(id);
+            return inventoryDao.find(id);
         } catch (Exception e) {
-            log.error("failed to fetch a user for id: {} due to exception.", id, e);
+            log.error("failed to fetch a inventory for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to delete a particular user by its id.
+     * api to delete a particular inventory by its id.
      *
      * @param id
      * @return
@@ -81,23 +81,23 @@ public class UsersApi {
     @DELETE
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Delete a particular user with its id")
-    @Path(Constants.API_V1_VERSION + "/users/delete/{id}")
-    public Response deleteUser(@PathParam("id") final long id) throws IomsDbAccessException {
+    @ApiOperation("Delete a particular inventory with its id")
+    @Path(Constants.API_V1_VERSION + "/inventory/delete/{id}")
+    public Response deleteInventory(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            usersDao.delete(id);
+            inventoryDao.delete(id);
             return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
-            log.error("failed to delete user for id: {} due to exception.", id, e);
+            log.error("failed to delete inventory for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to update an existing user.
+     * api to update an existing inventory.
      *
-     * @param user
+     * @param inventory
      * @return
      * @throws IomsDbAccessException
      */
@@ -105,24 +105,24 @@ public class UsersApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Update an existing user")
-    @Path(Constants.API_V1_VERSION + "/users/update/")
-    public Response updateUser(@Valid @NotNull final Users user)
+    @ApiOperation("Update an existing inventory")
+    @Path(Constants.API_V1_VERSION + "/inventory/update")
+    public Response updateInventory(@Valid @NotNull final Inventory inventory)
             throws IomsDbAccessException {
         try {
-            usersDao.update(user);
+            inventoryDao.update(inventory);
             return Response.status(HttpStatus.SC_NO_CONTENT).build();
         } catch (Exception e) {
-            log.error("failed to update user for id: {} due to exception.", user.getId(), e);
+            log.error("failed to update inventory for id: {} due to exception.", inventory.getId(), e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to create a new user.
+     * api to create a new inventory.
      *
-     * @param users
+     * @param inventory
      * @return
      * @throws IomsDbAccessException
      */
@@ -130,39 +130,16 @@ public class UsersApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Create a new user")
-    @Path(Constants.API_V1_VERSION + "/users/create")
-    public Users createUser(@Valid @NotNull final Users users)
+    @ApiOperation("Create a new inventory")
+    @Path(Constants.API_V1_VERSION + "/inventory/create")
+    public Inventory createInventory(@Valid @NotNull final Inventory inventory)
             throws IomsDbAccessException {
         try {
-            final Users user =  usersDao.create(users);
-            return user;
+            final Inventory newInventory =  inventoryDao.create(inventory);
+            return newInventory;
         } catch (Exception e) {
-            log.error("failed to create user for name:" + users.getUserName()
+            log.error("failed to create inventory for name:" + inventory.getInventoryName()
                     +" due to exception." , e);
-            throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
-                    "request. It has been logged.");
-        }
-    }
-
-    /**
-     * api to fetch all users by their roleId.
-     *
-     * @param id
-     * @return
-     * @throws com.naaz.ioms.app.services.exception.IomsDbAccessException
-     */
-    @GET
-    @UnitOfWork
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch a particular user with its id")
-    @Path(Constants.API_V1_VERSION + "/users/role/{id}")
-    public List<Users> getUserByUserRoleId(@PathParam("id") final long id) throws IomsDbAccessException {
-        try {
-
-            return usersDao.findAllUserByRole(id);
-        } catch (Exception e) {
-            log.error("failed to fetch a user for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }

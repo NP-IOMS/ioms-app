@@ -2,6 +2,7 @@ package com.naaz.ioms.data.access.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.naaz.ioms.data.access.utils.Constants;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import java.io.Serializable;
 
-import com.naaz.ioms.data.access.utils.Constants;
 
 /**
  * @nazimHussain
@@ -17,11 +17,11 @@ import com.naaz.ioms.data.access.utils.Constants;
  */
 
 @Entity
-@Table(name = Constants.USER_ROLE_TABLE_NAME)
+@Table(name = Constants.INVENTORY_TABLE_NAME)
 @Getter
 @Setter
 @Slf4j
-public class UserRole extends BaseEntity implements Serializable {
+public class Inventory extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 6L;
 
@@ -29,11 +29,23 @@ public class UserRole extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_role_name")
-    private String userRoleName;
+    @Column(name = "inventory_name")
+    private String inventoryName;
 
-    @Column(name = "user_role_desc")
-    private String userRoleDesc;
+    @Column(name = "inventory_desc")
+    private String inventoryDesc;
+
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "gst_rate")
+    private Long gstRate;
+
+    @Column(name = "status")
+    private Boolean status;
+
+    @Column(name = "available_stock")
+    private Integer availableStock;
 
     @Override
     public int hashCode() {
@@ -53,9 +65,9 @@ public class UserRole extends BaseEntity implements Serializable {
         {
             return false;
         }
-        if(that instanceof UserRole)
+        if(that instanceof Inventory)
         {
-            final UserRole temp = (UserRole) that;
+            final Inventory temp = (Inventory) that;
             return this.id == temp.id;
         }
         else

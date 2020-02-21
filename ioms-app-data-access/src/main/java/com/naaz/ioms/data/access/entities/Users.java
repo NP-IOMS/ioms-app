@@ -27,7 +27,7 @@ public class Users extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "user_name")
     private String userName;
@@ -46,6 +46,15 @@ public class Users extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_role_id")
     private UserRole userRole;
+
+    @Column(name = "user_address")
+    private String userAddress;
+
+    @Column(name = "user_mobile_number")
+    private Long userMobileNumber;
+
+    @Column(name = "user_monthly_target")
+    private Integer userMonthlyTarget;
 
     @Override
     public int hashCode() {

@@ -1,5 +1,6 @@
 package com.naaz.ioms.data.access.dao;
 
+import com.naaz.ioms.data.access.entities.UserRole;
 import com.naaz.ioms.data.access.entities.Users;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
@@ -43,6 +44,24 @@ public class UsersDao  extends AbstractDAO<Users> {
         final Root<Users> root = criteria.from(Users.class);
         criteria.select(root);
         final List<Users> users = currentSession().createQuery(criteria).getResultList();
+        return users;
+    }
+
+    public List<Users> findAllUserByRole(final long userRoleId) {
+        final UserRole userRole = new UserRole();
+        userRole.setId(userRoleId);
+        final CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+        final CriteriaQuery<Users> criteriaQuery = criteriaBuilder.createQuery(Users.class);
+        final Root<Users> root = criteriaQuery.from(Users.class);
+        final List<Predicate> predicateList = new ArrayList<Predicate>();
+        final Predicate userRolePredicate = criteriaBuilder.equal(root.get("userRole"), userRole);
+        predicateList.add(userRolePredicate);
+        criteriaQuery.where(predicateList.toArray(new Predicate[]{}));
+        final List<Users> users = currentSession().createQuery(criteriaQuery.select(root)).getResultList();
+        if(users.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return users;
     }
 

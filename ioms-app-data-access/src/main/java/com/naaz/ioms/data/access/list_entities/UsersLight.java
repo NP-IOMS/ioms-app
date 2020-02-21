@@ -12,6 +12,9 @@ public class UsersLight {
         this.userPass = users.getUserPass();
         this.userAccountName = users.getUserAccountName();
         this.userRoleId = users.getUserRole().getId();
+        this.userAddress = users.getUserAddress();
+        this.userMobileNumber = users.getUserMobileNumber();
+        this.userMonthlyTarget = users.getUserMonthlyTarget();
     }
 
     private long id;
@@ -19,4 +22,7 @@ public class UsersLight {
     private String userPass;
     private String userAccountName;
     private long userRoleId;
+    private String userAddress;
+    private long userMobileNumber;
+    private int userMonthlyTarget;
 }

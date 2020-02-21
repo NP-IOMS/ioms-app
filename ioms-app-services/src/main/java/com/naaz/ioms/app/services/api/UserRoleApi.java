@@ -82,7 +82,7 @@ public class UserRoleApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation("Delete a particular user-role with its id")
-    @Path(Constants.API_V1_VERSION + "/user-role/{id}/delete")
+    @Path(Constants.API_V1_VERSION + "/user-role/delete/{id}")
     public Response deleteUserRole(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
             userRoleDao.delete(id);
@@ -107,7 +107,7 @@ public class UserRoleApi {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation("Update an existing user-role")
-    @Path(Constants.API_V1_VERSION + "/user-role/{id}/update")
+    @Path(Constants.API_V1_VERSION + "/user-role/update/{id}")
     public Response updateUserRole(@PathParam("id") final long id, @Valid @NotNull final UserRole userRole)
             throws IomsDbAccessException {
         try {

@@ -1,9 +1,11 @@
 package com.naaz.ioms.app.services.api;
 
 import com.naaz.ioms.app.services.exception.IomsDbAccessException;
-import com.naaz.ioms.data.access.dao.UserRoleDao;
-import com.naaz.ioms.data.access.entities.UserRole;
 import com.naaz.ioms.app.services.util.Constants;
+import com.naaz.ioms.app.services.util.FileInfo;
+import com.naaz.ioms.app.services.util.Utility;
+import com.naaz.ioms.data.access.dao.FilesDao;
+import com.naaz.ioms.data.access.entities.Files;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,64 +17,63 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/")
-@Api("UserRole")
+@Api("Files")
 @Slf4j
-public class UserRoleApi {
+public class FilesApi {
+    final FilesDao filesDao;
 
-    private UserRoleDao userRoleDao;
-
-    public UserRoleApi(UserRoleDao userRoleDao) {
-        this.userRoleDao = userRoleDao;
+    public FilesApi(FilesDao filesDao) {
+        this.filesDao = filesDao;
     }
 
     /**
-     * api to fetch all userRole available.
+     * api to fetch a particular File by its id.
      *
+     * @param id
      * @return
      * @throws com.naaz.ioms.app.services.exception.IomsDbAccessException
      */
     @GET
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch all user-role in db")
-    @Path(Constants.API_V1_VERSION + "/user-role")
-    public List<UserRole> getAllUserRole() throws IomsDbAccessException {
-        try{
-            return userRoleDao.findAll();
-        } catch (Exception ex) {
-            log.error("failed to fetch all user-role due to exception." , ex);
+    @ApiOperation("Fetch a particular File with its id")
+    @Path(Constants.API_V1_VERSION + "/file/{id}")
+    public Files getFileById(@PathParam("id") final long id) throws IomsDbAccessException {
+        try {
+            return filesDao.find(id);
+        } catch (Exception e) {
+            log.error("failed to fetch a Files for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to fetch a particular user-role by its id.
+     * api to fetch a particular File by its id.
      *
      * @param id
      * @return
-     * @throws IomsDbAccessException
+     * @throws com.naaz.ioms.app.services.exception.IomsDbAccessException
      */
     @GET
     @UnitOfWork
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch a particular user-role with its id")
-    @Path(Constants.API_V1_VERSION + "/user-role/{id}")
-    public UserRole getUserRoleById(@PathParam("id") final long id) throws IomsDbAccessException {
+    @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation("Fetch a particular File with its id")
+    @Path(Constants.API_V1_VERSION + "/file/blob/{id}")
+    public String getFileBlobById(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            return userRoleDao.find(id);
+            return new String(filesDao.find(id).getFileData());
         } catch (Exception e) {
-            log.error("failed to fetch a user-role for id: {} due to exception.", id, e);
+            log.error("failed to fetch a Files for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to delete a particular user-role by its id.
+     * api to delete a particular Files by its id.
      *
      * @param id
      * @return
@@ -81,24 +82,23 @@ public class UserRoleApi {
     @DELETE
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Delete a particular user-role with its id")
-    @Path(Constants.API_V1_VERSION + "/user-role/delete/{id}")
-    public Response deleteUserRole(@PathParam("id") final long id) throws IomsDbAccessException {
+    @ApiOperation("Delete a particular Files with its id")
+    @Path(Constants.API_V1_VERSION + "/file/delete/{id}")
+    public Response deleteFiles(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            userRoleDao.delete(id);
+            filesDao.delete(id);
             return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
-            log.error("failed to delete user-role for id: {} due to exception.", id, e);
+            log.error("failed to delete Files for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to update an existing user-role.
+     * api to update an existing Files.
      *
-     * @param id
-     * @param userRole
+     * @param fileInfo
      * @return
      * @throws IomsDbAccessException
      */
@@ -106,24 +106,25 @@ public class UserRoleApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Update an existing user-role")
-    @Path(Constants.API_V1_VERSION + "/user-role/update/{id}")
-    public Response updateUserRole(@PathParam("id") final long id, @Valid @NotNull final UserRole userRole)
+    @ApiOperation("Update an existing Files")
+    @Path(Constants.API_V1_VERSION + "/file/update")
+    public Response updateFile(@Valid @NotNull final FileInfo fileInfo)
             throws IomsDbAccessException {
         try {
-            userRoleDao.update(userRole);
+            final Files newFile =  filesDao.create(Utility.createFilesFromFileInfo(fileInfo));
+            filesDao.update(newFile);
             return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
-            log.error("failed to update user-role for id: {} due to exception.", id, e);
+            log.error("failed to update Files for id: {} due to exception.", fileInfo.getFileId(), e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to create a new user-role.
+     * api to create a new File.
      *
-     * @param userRole
+     * @param fileInfo
      * @return
      * @throws IomsDbAccessException
      */
@@ -131,15 +132,16 @@ public class UserRoleApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Create a new user-role")
-    @Path(Constants.API_V1_VERSION + "/user-role/create")
-    public UserRole createUserRole(@Valid @NotNull final UserRole userRole)
+    @ApiOperation("Create a new File")
+    @Path(Constants.API_V1_VERSION + "/file/create")
+    public Files createFile(@Valid @NotNull final FileInfo fileInfo)
             throws IomsDbAccessException {
         try {
-            final UserRole newUserRole =  userRoleDao.create(userRole);
-            return newUserRole;
+
+            final Files newFile =  filesDao.create(Utility.createFilesFromFileInfo(fileInfo));
+            return newFile;
         } catch (Exception e) {
-            log.error("failed to create user-role for name:" + userRole.getUserRoleName()
+            log.error("failed to create Files for name:" + fileInfo.getFileName()
                     +" due to exception." , e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");

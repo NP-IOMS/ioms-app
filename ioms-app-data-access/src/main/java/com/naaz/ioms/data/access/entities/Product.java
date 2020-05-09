@@ -2,6 +2,7 @@ package com.naaz.ioms.data.access.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.naaz.ioms.data.access.utils.Constants;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import java.io.Serializable;
 
-import com.naaz.ioms.data.access.utils.Constants;
 
 /**
  * @nazimHussain
@@ -17,11 +17,11 @@ import com.naaz.ioms.data.access.utils.Constants;
  */
 
 @Entity
-@Table(name = Constants.USERS_TABLE_NAME)
+@Table(name = Constants.PRODUCT_TABLE_NAME)
 @Getter
 @Setter
 @Slf4j
-public class Users extends BaseEntity implements Serializable {
+public class Product extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 6L;
 
@@ -29,35 +29,38 @@ public class Users extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "product_name")
+    private String productName;
 
-    @Column(name = "user_pass")
-    private String userPass;
+    @Column(name = "product_desc")
+    private String productDesc;
 
-    @Column(name = "user_account_name")
-    private String userAccountName;
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "gst_rate")
+    private Long gstRate;
+
+    @Column(name = "status")
+    private Boolean status;
+
+    @Column(name = "available_stock")
+    private Integer availableStock;
+
+    @Column(name = "hsn_code")
+    private String hsnCode;
 
     /**
-     * ManyToOne relation with UserRole. Represents the UserRole to which this User belong to.
+     * ManyToOne relation with ProductCategory. Represents the ProductCategory to which this Product belong to.
      *
      * Uni-directional relation.
      */
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "user_role_id")
-    private UserRole userRole;
-
-    @Column(name = "user_address")
-    private String userAddress;
-
-    @Column(name = "user_mobile_number")
-    private Long userMobileNumber;
-
-    @Column(name = "user_monthly_target")
-    private Integer userMonthlyTarget;
+    @JoinColumn(name = "product_category_id")
+    private ProductCategory productCategory;
 
     /**
-     * OneToOne relation with Files. Represents the file for user.
+     * OneToOne relation with Files. Represents the file for Product.
      *
      * Uni-directional relation.
      */
@@ -83,9 +86,9 @@ public class Users extends BaseEntity implements Serializable {
         {
             return false;
         }
-        if(that instanceof Users)
+        if(that instanceof Product)
         {
-            final Users temp = (Users) that;
+            final Product temp = (Product) that;
             return this.id == temp.id;
         }
         else

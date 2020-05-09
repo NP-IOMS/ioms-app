@@ -14,8 +14,8 @@ public class OrdersHeaderDetails {
     private String orderRaisedBy;
     protected String orderRaisedOn;
     protected String orderDispatchedOn;
-    private String inventoryName;
-    private Float inventoryPrice;
-    private Long inventoryGstRate;
-    private Long inventoryQuantity;
+    private String productName;
+    private Float productPrice;
+    private Long productGstRate;
+    private Long productQuantity;
 }

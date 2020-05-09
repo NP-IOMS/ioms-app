@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @Path("/")
-@Api("OrderHeader")
+@Api("Reports")
 @Slf4j
 public class ReportsApi {
 
@@ -69,10 +69,10 @@ public class ReportsApi {
                     ordersHeaderDetails.setOrderRaisedBy(orderHeader.getCreatedBy().getUserAccountName());
                     ordersHeaderDetails.setOrderRaisedOn(outputDateFormatter.format(new Date(orderHeader.getCreatedOn().getTime())));
                     ordersHeaderDetails.setOrderDispatchedOn(outputDateFormatter.format(new Date(orderHeader.getDispatchedOn().getTime())));
-                    ordersHeaderDetails.setInventoryName(ordersDetails.getInventory().getInventoryName());
-                    ordersHeaderDetails.setInventoryPrice(ordersDetails.getInventory().getPrice());
-                    ordersHeaderDetails.setInventoryGstRate(ordersDetails.getInventory().getGstRate());
-                    ordersHeaderDetails.setInventoryQuantity(ordersDetails.getInventoryQuantity());
+                    ordersHeaderDetails.setProductName(ordersDetails.getProduct().getProductName());
+                    ordersHeaderDetails.setProductPrice(ordersDetails.getProduct().getPrice());
+                    ordersHeaderDetails.setProductGstRate(ordersDetails.getProduct().getGstRate());
+                    ordersHeaderDetails.setProductQuantity(ordersDetails.getProductQuantity());
                     orderHeaderDetailsList.add(ordersHeaderDetails);
                 });
             });

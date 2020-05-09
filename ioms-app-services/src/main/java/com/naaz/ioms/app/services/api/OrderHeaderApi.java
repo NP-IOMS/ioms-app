@@ -108,7 +108,7 @@ public class OrderHeaderApi {
             throws IomsDbAccessException {
         try {
             orderHeaderDao.update(ordersHeader);
-            return Response.status(HttpStatus.SC_NO_CONTENT).build();
+            return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
             log.error("failed to update orderHeader for id: {} due to exception.", ordersHeader.getId(), e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +

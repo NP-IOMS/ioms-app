@@ -10,50 +10,34 @@ import lombok.extern.slf4j.Slf4j;
 import javax.persistence.*;
 import java.io.Serializable;
 
-
 /**
  * @nazimHussain
  *
  */
 
 @Entity
-@Table(name = Constants.INVENTORY_TABLE_NAME)
+@Table(name = Constants.PRODUCT_CATEGORY_TABLE_NAME)
 @Getter
 @Setter
 @Slf4j
-public class Inventory extends BaseEntity implements Serializable {
-
-    private static final long serialVersionUID = 6L;
+public class ProductCategory extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 7L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "inventory_name")
-    private String inventoryName;
+    @Column(name = "product_category_name")
+    private String productCategoryName;
 
-    @Column(name = "inventory_desc")
-    private String inventoryDesc;
-
-    @Column(name = "price")
-    private Float price;
-
-    @Column(name = "gst_rate")
-    private Long gstRate;
+    @Column(name = "product_category_desc")
+    private String productCategoryDesc;
 
     @Column(name = "status")
     private Boolean status;
 
-    @Column(name = "available_stock")
-    private Integer availableStock;
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Long.toString(id).hashCode();
-        return result;
-    }
+    @Column(name = "hsn_code")
+    private String hsnCode;
 
     @Override
     public boolean equals(Object that) {
@@ -65,9 +49,9 @@ public class Inventory extends BaseEntity implements Serializable {
         {
             return false;
         }
-        if(that instanceof Inventory)
+        if(that instanceof ProductCategory)
         {
-            final Inventory temp = (Inventory) that;
+            final ProductCategory temp = (ProductCategory) that;
             return this.id == temp.id;
         }
         else

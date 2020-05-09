@@ -30,7 +30,7 @@ public class Service extends Application<IomsAppConfiguration> {
     }
 
     private final HibernateBundle<IomsAppConfiguration> hibernate =
-            new HibernateBundle<IomsAppConfiguration>(Users.class, UserRole.class, Inventory.class, OrdersHeader.class, OrdersDetails.class) {
+            new HibernateBundle<IomsAppConfiguration>(Users.class, UserRole.class, Product.class, OrdersHeader.class, OrdersDetails.class, ProductCategory.class, Files.class) {
                 public DataSourceFactory getDataSourceFactory(IomsAppConfiguration alertProcessorConfiguration) {
                     return alertProcessorConfiguration.getDataSourceFactory();
                 }
@@ -55,7 +55,7 @@ public class Service extends Application<IomsAppConfiguration> {
                 environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         // Configure CORS parameters
         cors.setInitParameter("allowedOrigins", "*");
-        cors.setInitParameter("allowedHeaders", "X-Requested-With,Content-Type,Accept,Origin,orderStatus,fromDate,endDate");
+        cors.setInitParameter("allowedHeaders", "X-Requested-With,Content-Type,Accept,Origin,orderStatus,fromDate,endDate,category-status");
         cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
 
         // Add URL mapping
@@ -67,9 +67,12 @@ public class Service extends Application<IomsAppConfiguration> {
 
         final UsersDao usersDao = new UsersDao(hibernate.getSessionFactory());
         final UserRoleDao userRoleDao = new UserRoleDao(hibernate.getSessionFactory());
-        final InventoryDao inventoryDao = new InventoryDao(hibernate.getSessionFactory());
+        final ProductDao productDao = new ProductDao(hibernate.getSessionFactory());
+        final ProductCategoryDao productCategoryDao = new ProductCategoryDao(hibernate.getSessionFactory());
         final OrderHeaderDao orderHeaderDao = new OrderHeaderDao(hibernate.getSessionFactory());
         final ReportsDao reportsDao = new ReportsDao(hibernate.getSessionFactory());
+        final OrderDetailsDao orderDetailsDao = new OrderDetailsDao(hibernate.getSessionFactory());
+        final FilesDao filesDao = new FilesDao(hibernate.getSessionFactory());
 
         final Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(ServerProperties.WADL_FEATURE_DISABLE, false);
@@ -79,9 +82,12 @@ public class Service extends Application<IomsAppConfiguration> {
         environment.jersey().register(new UsersApi(usersDao));
         environment.jersey().register(new UserRoleApi(userRoleDao));
         environment.jersey().register(new LoginApi(usersDao));
-        environment.jersey().register(new InventoryApi(inventoryDao));
+        environment.jersey().register(new ProductApi(productDao));
+        environment.jersey().register(new ProductCategoryApi(productCategoryDao));
         environment.jersey().register(new OrderHeaderApi(orderHeaderDao));
         environment.jersey().register(new ReportsApi(reportsDao));
+        environment.jersey().register(new OrderDetailsApi(orderDetailsDao));
+        environment.jersey().register(new FilesApi(filesDao));
 
         log.info("service started");
     }

@@ -40,28 +40,28 @@ public class OrdersDetails implements Serializable {
     private OrdersHeader ordersHeader;
 
     /**
-     * ManyToOne relation with Inventory. Represents the Inventory to which this OrderDetails belong to.
+     * ManyToOne relation with Product. Represents the Product to which this OrderDetails belong to.
      *
      * Bi-directional relation.
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "inventory_id")
-    private Inventory inventory;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-    @Column(name = "inventory_price")
-    private Float inventoryPrice;
+    @Column(name = "product_price")
+    private Float productPrice;
 
     @Column(name = "gst_rate")
     private Long gstRate;
 
-    @Column(name = "inventory_quantity")
-    private Long inventoryQuantity;
+    @Column(name = "product_quantity")
+    private Long productQuantity;
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Long.toString(ordersHeader.getId()).hashCode() + Long.toString(inventory.getId()).hashCode();
+        result = prime * result + Long.toString(ordersHeader.getId()).hashCode() + Long.toString(product.getId()).hashCode();
         return result;
     }
 
@@ -78,7 +78,7 @@ public class OrdersDetails implements Serializable {
         if(that instanceof OrdersDetails)
         {
             final OrdersDetails temp = (OrdersDetails) that;
-            return (this.ordersHeader.getId() == temp.ordersHeader.getId() && this.inventory.getId() == temp.inventory.getId());
+            return (this.ordersHeader.getId() == temp.ordersHeader.getId() && this.product.getId() == temp.product.getId());
         }
         else
         {
@@ -93,7 +93,7 @@ public class OrdersDetails implements Serializable {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             log.error("unable to compute toString due to exception: ", e);
-            return String.format("{ orderId: %s, inventoryId: %s, obj: %s}", ordersHeader.getId(), inventory.getId(), super.toString());
+            return String.format("{ orderId: %s, productId: %s, obj: %s}", ordersHeader.getId(), product.getId(), super.toString());
         }
     }
 }

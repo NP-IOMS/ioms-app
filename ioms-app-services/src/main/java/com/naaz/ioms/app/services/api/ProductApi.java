@@ -2,8 +2,8 @@ package com.naaz.ioms.app.services.api;
 
 import com.naaz.ioms.app.services.exception.IomsDbAccessException;
 import com.naaz.ioms.app.services.util.Constants;
-import com.naaz.ioms.data.access.dao.InventoryDao;
-import com.naaz.ioms.data.access.entities.Inventory;
+import com.naaz.ioms.data.access.dao.ProductDao;
+import com.naaz.ioms.data.access.entities.Product;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,18 +18,18 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/")
-@Api("Inventory")
+@Api("Product")
 @Slf4j
-public class InventoryApi {
+public class ProductApi {
 
-    private InventoryDao inventoryDao;
+    private ProductDao productDao;
 
-    public InventoryApi(InventoryDao inventoryDao) {
-        this.inventoryDao = inventoryDao;
+    public ProductApi(ProductDao productDao) {
+        this.productDao = productDao;
     }
 
     /**
-     * api to fetch all inventory available.
+     * api to fetch all product available.
      *
      * @return
      * @throws com.naaz.ioms.app.services.exception.IomsDbAccessException
@@ -37,20 +37,20 @@ public class InventoryApi {
     @GET
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch all inventory in db")
-    @Path(Constants.API_V1_VERSION + "/inventory")
-    public List<Inventory> getAllInventory() throws IomsDbAccessException {
+    @ApiOperation("Fetch all product in db")
+    @Path(Constants.API_V1_VERSION + "/product")
+    public List<Product> getAllProduct() throws IomsDbAccessException {
         try{
-            return inventoryDao.findAll();
+            return productDao.findAll();
         } catch (Exception ex) {
-            log.error("failed to fetch all inventory due to exception." , ex);
+            log.error("failed to fetch all product due to exception." , ex);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to fetch a particular inventory by its id.
+     * api to fetch a particular product by its id.
      *
      * @param id
      * @return
@@ -59,20 +59,20 @@ public class InventoryApi {
     @GET
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Fetch a particular inventory with its id")
-    @Path(Constants.API_V1_VERSION + "/inventory/{id}")
-    public Inventory getInventoryById(@PathParam("id") final long id) throws IomsDbAccessException {
+    @ApiOperation("Fetch a particular product with its id")
+    @Path(Constants.API_V1_VERSION + "/product/{id}")
+    public Product getProductById(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            return inventoryDao.find(id);
+            return productDao.find(id);
         } catch (Exception e) {
-            log.error("failed to fetch a inventory for id: {} due to exception.", id, e);
+            log.error("failed to fetch a product for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to delete a particular inventory by its id.
+     * api to delete a particular product by its id.
      *
      * @param id
      * @return
@@ -81,23 +81,23 @@ public class InventoryApi {
     @DELETE
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation("Delete a particular inventory with its id")
-    @Path(Constants.API_V1_VERSION + "/inventory/delete/{id}")
-    public Response deleteInventory(@PathParam("id") final long id) throws IomsDbAccessException {
+    @ApiOperation("Delete a particular product with its id")
+    @Path(Constants.API_V1_VERSION + "/product/delete/{id}")
+    public Response deleteProduct(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-            inventoryDao.delete(id);
+            productDao.delete(id);
             return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
-            log.error("failed to delete inventory for id: {} due to exception.", id, e);
+            log.error("failed to delete product for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to update an existing inventory.
+     * api to update an existing product.
      *
-     * @param inventory
+     * @param product
      * @return
      * @throws IomsDbAccessException
      */
@@ -105,24 +105,24 @@ public class InventoryApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Update an existing inventory")
-    @Path(Constants.API_V1_VERSION + "/inventory/update")
-    public Response updateInventory(@Valid @NotNull final Inventory inventory)
+    @ApiOperation("Update an existing product")
+    @Path(Constants.API_V1_VERSION + "/product/update")
+    public Response updateProduct(@Valid @NotNull final Product product)
             throws IomsDbAccessException {
         try {
-            inventoryDao.update(inventory);
-            return Response.status(HttpStatus.SC_NO_CONTENT).build();
+                productDao.update(product);
+            return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
-            log.error("failed to update inventory for id: {} due to exception.", inventory.getId(), e);
+            log.error("failed to update product for id: {} due to exception.", product.getId(), e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");
         }
     }
 
     /**
-     * api to create a new inventory.
+     * api to create a new product.
      *
-     * @param inventory
+     * @param product
      * @return
      * @throws IomsDbAccessException
      */
@@ -130,15 +130,15 @@ public class InventoryApi {
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation("Create a new inventory")
-    @Path(Constants.API_V1_VERSION + "/inventory/create")
-    public Inventory createInventory(@Valid @NotNull final Inventory inventory)
+    @ApiOperation("Create a new product")
+    @Path(Constants.API_V1_VERSION + "/product/create")
+    public Product createProduct(@Valid @NotNull final Product product)
             throws IomsDbAccessException {
         try {
-            final Inventory newInventory =  inventoryDao.create(inventory);
-            return newInventory;
+            final Product newProduct =  productDao.create(product);
+            return newProduct;
         } catch (Exception e) {
-            log.error("failed to create inventory for name:" + inventory.getInventoryName()
+            log.error("failed to create product for name:" + product.getProductName()
                     +" due to exception." , e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
                     "request. It has been logged.");

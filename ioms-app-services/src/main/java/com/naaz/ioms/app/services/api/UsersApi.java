@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.util.List;
 
 @Path("/")
@@ -111,7 +112,7 @@ public class UsersApi {
             throws IomsDbAccessException {
         try {
             usersDao.update(user);
-            return Response.status(HttpStatus.SC_NO_CONTENT).build();
+            return Response.status(HttpStatus.SC_OK).build();
         } catch (Exception e) {
             log.error("failed to update user for id: {} due to exception.", user.getId(), e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
@@ -129,7 +130,7 @@ public class UsersApi {
     @POST
     @UnitOfWork
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA})
     @ApiOperation("Create a new user")
     @Path(Constants.API_V1_VERSION + "/users/create")
     public Users createUser(@Valid @NotNull final Users users)
@@ -159,8 +160,8 @@ public class UsersApi {
     @Path(Constants.API_V1_VERSION + "/users/role/{id}")
     public List<Users> getUserByUserRoleId(@PathParam("id") final long id) throws IomsDbAccessException {
         try {
-
-            return usersDao.findAllUserByRole(id);
+            final List<Users> allSalesman = usersDao.findAllUserByRole(id);
+            return allSalesman;
         } catch (Exception e) {
             log.error("failed to fetch a user for id: {} due to exception.", id, e);
             throw new IomsDbAccessException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "There was an error processing your " +
